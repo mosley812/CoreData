@@ -17,15 +17,20 @@ class ViewController: UIViewController {
   @IBOutlet weak var tableView: UITableView!
   @IBOutlet weak var textField: UITextField!
   @IBAction func addButtonTapped(_ sender: UIButton) {
+    //let nameToSave = textField.text
+    //print(self)//<CoreData1.ViewController: 0x7fe421401e70>
+    save(name: textField.text!)
   }
   
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
     
-    //tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+    tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     //insertData()
     //fetchData()
+    //print(self)// <CoreData1.ViewController: 0x7fe421401e70>
+    
     
   }
   
@@ -44,25 +49,11 @@ class ViewController: UIViewController {
     
   }
   
-  // Insert the data (This was used to initially populate the data model)
-  func insertData() {
+  func save(name: String) {
     let toDo: ToDo = NSEntityDescription.insertNewObject(forEntityName: "ToDo", into: CoreDataManager.getContext()) as! ToDo
-    toDo.name = "To-do1"
+    toDo.name = name
     CoreDataManager.saveContext()
-  }
-  
-  // Fetch the data (This was used to initially display the data)
-  func fetchData() {
-    let fetchRequest: NSFetchRequest<ToDo> = ToDo.fetchRequest()
-    do {
-      let searchResults = try CoreDataManager.getContext().fetch(fetchRequest)
-      print("Number of results: \(searchResults.count)")
-      for result in searchResults {
-        print("To-do: \(result.name)")
-      }
-    } catch {
-      print("Error: \(error)")
-    }
+    
   }
   
 }

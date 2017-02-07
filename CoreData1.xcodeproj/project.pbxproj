@@ -13,6 +13,7 @@
 		64607B531E4A19C400B5D17E /* CoreData1.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64607B511E4A19C400B5D17E /* CoreData1.xcdatamodeld */; };
 		64607B551E4A19C400B5D17E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 64607B541E4A19C400B5D17E /* Assets.xcassets */; };
 		64607B581E4A19C400B5D17E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64607B561E4A19C400B5D17E /* LaunchScreen.storyboard */; };
+		64607B601E4A1EB400B5D17E /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64607B5F1E4A1EB400B5D17E /* CoreDataController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		64607B541E4A19C400B5D17E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		64607B571E4A19C400B5D17E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		64607B591E4A19C400B5D17E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		64607B5F1E4A1EB400B5D17E /* CoreDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			children = (
 				64607B4A1E4A19C400B5D17E /* AppDelegate.swift */,
 				64607B4C1E4A19C400B5D17E /* ViewController.swift */,
+				64607B5F1E4A1EB400B5D17E /* CoreDataController.swift */,
 				64607B4E1E4A19C400B5D17E /* Main.storyboard */,
 				64607B541E4A19C400B5D17E /* Assets.xcassets */,
 				64607B561E4A19C400B5D17E /* LaunchScreen.storyboard */,
@@ -141,6 +144,7 @@
 			files = (
 				64607B4D1E4A19C400B5D17E /* ViewController.swift in Sources */,
 				64607B4B1E4A19C400B5D17E /* AppDelegate.swift in Sources */,
+				64607B601E4A1EB400B5D17E /* CoreDataController.swift in Sources */,
 				64607B531E4A19C400B5D17E /* CoreData1.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

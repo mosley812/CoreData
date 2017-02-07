@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-class CoreDataManager {
+class CoreDataController {
   
   // Not sure why this was added
   private init() {
@@ -17,7 +17,7 @@ class CoreDataManager {
   
   // Set up the Managed Object Context
   class func getContext() -> NSManagedObjectContext {
-    return CoreDataManager.persistentContainer.viewContext
+    return CoreDataController.persistentContainer.viewContext
   }
   
   // MARK: - Core Data stack

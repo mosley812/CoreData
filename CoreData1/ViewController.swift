@@ -15,6 +15,9 @@ class ViewController: UIViewController {
   var toDos = [NSManagedObject]()
   
   @IBOutlet weak var tableView: UITableView!
+  @IBOutlet weak var textField: UITextField!
+  @IBAction func addButtonTapped(_ sender: UIButton) {
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()

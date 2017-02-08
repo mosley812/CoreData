@@ -9,94 +9,98 @@
 import UIKit
 import CoreData
 
-class ViewController: UIViewController, NSFetchedResultsControllerDelegate {
+class ViewController: UIViewController {
   
-  //var toDos: [NSManagedObject] = []
-  var toDos = [NSManagedObject]()
-  
+  // MARK: -
   @IBOutlet weak var tableView: UITableView!
   @IBOutlet weak var textField: UITextField!
   @IBAction func addButtonTapped(_ sender: UIButton) {
-    //let nameToSave = textField.text
-    //print(self)//<CoreData1.ViewController: 0x7fe421401e70>
     save(name: textField.text!)
   }
   
-  //lazy var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult> = {
-  lazy var fetchedResultsController: NSFetchedResultsController<ToDo> = {
-    
-    let fetchRequest = NSFetchRequest<ToDo>(entityName: "ToDo")
+  // MARK: - Fetched Result Controller
+  fileprivate lazy var fetchedResultsController: NSFetchedResultsController<ToDo> = {
 
-    let primarySortDescriptor = NSSortDescriptor(key: "name", ascending: true)
-    let sortDescriptors = [primarySortDescriptor]
+    // Create the fetch request
+    let fetchRequest: NSFetchRequest<ToDo> = ToDo.fetchRequest()
     
-    fetchRequest.sortDescriptors = sortDescriptors
+    // Configure Fetch Request
+    fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
     
-    let frc = NSFetchedResultsController(
+    // Create Fetched Results Controller
+    let fetchedResultsController = NSFetchedResultsController(
       fetchRequest: fetchRequest,
       managedObjectContext: CoreDataController.getContext(),
       sectionNameKeyPath: nil,
       cacheName: nil)
     
-    frc.delegate = self
-    
-    return frc
-  }()
-  
-  
-  
-  //var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>!
-/*
-  func initializeFetchedResultsController() {
-    // Initialize Fetch Request
-    //let fetchRequest: NSFetchRequest<ToDo> = ToDo.fetchRequest()
-    let fetchRequest = NSFetchRequest<ToDo>(entityName: "ToDo")
-    
-    let moc = CoreDataController.getContext()
-    fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
+    // Configure Fetched Results Controller
     fetchedResultsController.delegate = self
     
-  }
-*/  
+    return fetchedResultsController
+
+  }()
+  
+  // MARK: - View Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    // Do any additional setup after loading the view, typically from a nib.
     
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-    //insertData()
-    //fetchData()
-    //print(self)// <CoreData1.ViewController: 0x7fe421401e70>
     
+    // Populate the tableView
     do {
-      try fetchedResultsController.performFetch()
+      try self.fetchedResultsController.performFetch()
     } catch {
       fatalError("Failed to initialize FetchedResultsController: \(error)")
     }
     
   }
   
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(true)
-    
-    /*
-    //let fetchRequest: NSFetchRequest<ToDo> = NSFetchRequest(entityName: "ToDo")
-    let fetchRequest: NSFetchRequest<ToDo> = ToDo.fetchRequest()
-    do {
-      toDos = try CoreDataController().fetch(fetchRequest)
-    } catch {
-      print("Could not fetch. \(error)")
-      //print("Error: \(error)")
-    }
-    */
-    
-  }
-  
+  // MARK: -
   func save(name: String) {
     let toDo: ToDo = NSEntityDescription.insertNewObject(forEntityName: "ToDo", into: CoreDataController.getContext()) as! ToDo
     toDo.name = name
     CoreDataController.saveContext()
     
+    // Pop View Controller
+    _ = navigationController?.popViewController(animated: true)
   }
+  
+}
+
+// MARK: -
+extension ViewController: NSFetchedResultsControllerDelegate {
+  
+  func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    tableView.beginUpdates()
+  }
+  
+  func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    tableView.endUpdates()
+  }
+  
+  func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+    switch (type) {
+    case .insert:
+      if let indexPath = newIndexPath {
+        tableView.insertRows(at: [indexPath], with: .fade)
+      }
+      break;
+    case .delete:
+      if let indexPath = indexPath {
+        tableView.deleteRows(at: [indexPath], with: .fade)
+      }
+      break;
+    default:
+      print("...")
+      
+    }
+  }
+  
+  func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+    
+  }
+  
   
 }
 
@@ -104,34 +108,32 @@ class ViewController: UIViewController, NSFetchedResultsControllerDelegate {
 extension ViewController: UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    if let sections = fetchedResultsController.sections {
-      let sectionInfo = sections[section]
-      return sectionInfo.numberOfObjects
-    }
-    
-    return 0
-    //return toDos.count
+    guard let toDos = fetchedResultsController.fetchedObjects else { return 0 }
+    return toDos.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
     
-    // Set up the cell
-    let record = fetchedResultsController.object(at: indexPath)
-
-    // Update Cell
-    if let name = record.value(forKeyPath: "name") as? String {
-      cell.textLabel?.text = name
-    }
+    // fetch to do
+    let toDo = fetchedResultsController.object(at: indexPath)
     
+    // Update Cell
+    cell.textLabel?.text = toDo.name
+
     //Populate the cell from the object
     return cell
-
+    
   }
-//  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//    let item = toDos[indexPath.row]
-//    let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-//    cell.textLabel?.text = item.value(forKeyPath: "name") as? String
-//    return cell
-//  }
+  
+  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      // Fetch Quote
+      let toDo = fetchedResultsController.object(at: indexPath)
+      
+      // Delete Quote
+      toDo.managedObjectContext?.delete(toDo)
+    }
+  }
+  
 }

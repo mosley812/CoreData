@@ -15,11 +15,14 @@ class ViewController: UIViewController {
   @IBOutlet weak var tableView: UITableView!
   @IBOutlet weak var textField: UITextField!
   @IBAction func addButtonTapped(_ sender: UIButton) {
-    save(name: textField.text!)
+    //save(name: textField.text!)
+    //let toDo: ToDo = NSEntityDescription.insertNewObject(forEntityName: "ToDo", into: CoreDataController.getContext()) as! ToDo
+    let toDo = ToDo(context: CoreDataController.getContext())
+    toDo.name = textField.text
   }
   
   // MARK: - Fetched Result Controller
-  fileprivate lazy var fetchedResultsController: NSFetchedResultsController<ToDo> = {
+  lazy var fetchedResultsController: NSFetchedResultsController<ToDo> = {
 
     // Create the fetch request
     let fetchRequest: NSFetchRequest<ToDo> = ToDo.fetchRequest()
@@ -54,21 +57,18 @@ class ViewController: UIViewController {
       fatalError("Failed to initialize FetchedResultsController: \(error)")
     }
     
+    NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: Notification.Name.UIApplicationDidEnterBackground, object: nil)
+    
   }
   
-  // MARK: -
-  func save(name: String) {
-    let toDo: ToDo = NSEntityDescription.insertNewObject(forEntityName: "ToDo", into: CoreDataController.getContext()) as! ToDo
-    toDo.name = name
+  // MARK: - Notification Handling
+  func applicationDidEnterBackground(_ notification: Notification) {
     CoreDataController.saveContext()
-    
-    // Pop View Controller
-    _ = navigationController?.popViewController(animated: true)
   }
   
 }
 
-// MARK: -
+// MARK: - Fetched Results Controller Delegate
 extension ViewController: NSFetchedResultsControllerDelegate {
   
   func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -104,7 +104,7 @@ extension ViewController: NSFetchedResultsControllerDelegate {
   
 }
 
-// MARK: - UITableViewDataSource
+// MARK: - Table View Data Source
 extension ViewController: UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
